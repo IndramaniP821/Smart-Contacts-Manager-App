@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" 
+th:replace="Normal/dashboard::layout(~{::section})">
+<head>
+	<meta charset="UTF-8" />
+	<title>Add Contact Form</title>
+</head>
+<body>
+	<section class="text-center">
+	<div class="card mr-3">
+	<div class="card-body" >
+	<h3 class="alert alert-info">Add Contact</h3>
+	
+	<div class="container-fluid mt-2 p-4" style="background:rgb(230, 230, 230);">
+	<div class="row">
+	<div class="col-md-8 offset-md-2">
+	<div th:if="${session.message2}" th:classappend="${session.message2.type}" 
+	class="alert text-center" role="alert">
+	<p th:text="${session.message2.content}"/>
+	<!--<th:block th:text="${#session.removeAttribute('message2')}" ></th:block>-->
+	</div>
+	<form novalidate th:action="@{/user/processContact}" method="post" 
+	th:object="${contact}" enctype="multipart/form-data" class="mt-2">
+	
+	<div class="container text-center">
+	<img style="height:80px;width:80px;" th:src="@{/images/membership.png}" alt="Form submit here" />
+	</div>
+	
+	<!--FirstName  -->
+	<div class="input-group mt-3">
+	<div class="input-group-prepend">
+	<div class="input-group-text mr-3">
+	<i class="fas fa-user-alt">
+	</i>
+	</div>
+	</div>
+	<input th:classappend="${#fields.hasErrors('name')?'is-invalid':''}" type="text" class="form-control" 
+	placeHolder="Enter Name here" th:value="${contact.name}" id="inputName" name="name"/>
+	<div th:each="e:${#fields.errors('name')}" class="invalid-feedback" th:text="${e}"></div>
+	</div>
+	
+	<!--second Name -->
+	<div class="input-group mt-3">
+	<div class="input-group-prepend">
+	<div class="input-group-text mr-3">
+	<i class="fa fa-plus">
+	</i>
+	</div>
+	</div>
+	<input th:classappend="${#fields.hasErrors('nickName')?'is-invalid':''}" type="text" class="form-control" 
+	placeHolder="Enter Nick Name here" th:value="${contact.nickName}" id="inputNickname" name="nickName"/>
+	<div th:each="e:${#fields.errors('nickName')}" class="invalid-feedback" th:text="${e}"></div>
+	</div>
+	
+	<!--Email -->
+	<div class="input-group mt-3">
+	<div class="input-group-prepend">
+	<div class="input-group-text">
+	<i class="fa">
+	@
+	</i>
+	</div>
+	</div>
+	<input th:classappend="${#fields.hasErrors('email')?'is-invalid':''}" type="email" class="form-control" 
+	placeHolder="Enter Email here" th:value="${contact.email}" id="inputEmail" name="email"/>
+	<div th:each="e:${#fields.errors('email')}" class="invalid-feedback" th:text="${e}"></div>
+	</div>
+	
+	<!--phone  -->
+	<div class="input-group mt-3">
+	<div class="input-group-prepend">
+	<div class="input-group-text mr-3">
+	<i class="fa fa-phone">
+	</i>
+	</div>
+	</div>
+	<input th:classappend="${#fields.hasErrors('phone')?'is-invalid':''}" type="number" class="form-control" 
+	placeHolder="Enter Phone no. here" th:value="${contact.phone}" id="inputPhone" name="phone"/>
+	<div th:each="e:${#fields.errors('phone')}" class="invalid-feedback" th:text="${e}"></div>
+	</div>
+	
+	
+	<!--work  -->
+	<div class="input-group mt-3">
+	<div class="input-group-prepend">
+	<div class="input-group-text mr-3">
+	<i class="fa fa-briefcase">
+	</i>
+	</div>
+	</div>
+	<input th:classappend="${#fields.hasErrors('work')?'is-invalid':''}" type="text" class="form-control" 
+	placeHolder="Enter Profession here" th:value="${contact.work}" id="inputWork" name="work"/>
+	<div th:each="e:${#fields.errors('work')}" class="invalid-feedback" th:text="${e}"></div>
+	</div>
+	
+	<!-- Description -->
+	<div class="form-group mt-3">
+	<textarea th:classappend="${#fields.hasErrors('description')?'is-invalid':''}" name="description" id="TinyMCE" cols="8"
+	 rows="8" class="form-control" th:text="${contact.description}" placeHolder="Enter something about yourself"></textarea>
+	<div th:each="e:${#fields.errors('description')}" class="invalid-feedback" th:text="${e}"></div>
+	</div>
+	
+	<!-- Image file -->
+	<div class="form-group mt-3">
+	<input th:classappend="${#fields.hasErrors('image')?'is-invalid':''}" type="file" class="form-control" id="inputFile" name="profileImage"/>
+	<div th:each="e:${#fields.errors('image')}" th:value="${file}" class="invalid-feedback" th:text="${e}"></div>
+	</div>
+	
+	<!-- Submit button -->
+	<div class="form-group mt-3">
+	<button type="submit" 
+	class="btn btn-outline-primary">Save</button>
+	
+	<!-- Reset button -->
+	<button type="reset" 
+	class="btn btn-outline-danger">Reset</button>
+	</div>
+	
+	</form>
+	<h1><small class="text-muted">OR</small></h1>
+	<form class="form-control mt-2">
+	
+	<h3><small class="text-primary">Upload Bulk Contacts In EXCEL</small></h3>
+    <div id="upload-bulk-contacts" class="container text-center form-group mt-3">
+    <input type="file" class="form-control" id="contactsFileInput"/>
+    <div class="form-group mt-3">
+    <button id="contactsUploadBtn" type="button" class="btn btn-outline-primary">Upload</button>
+    <button type="reset" class="btn btn-outline-danger">Reset</button>
+	</div>
+	</div>
+	
+	<div id="loading-symbol" class="container text-center" style="display: none;">
+	<img style="height:200px;width:200px;" th:src="@{/images/loading_symbol.gif}" alt="loading..." />
+	</div>
+	
+	<div class="form-group mt-3">
+	<button id="sampleContactsDownloadBtn" type="button" class="btn btn-info">View Sample File</button>
+	</div>
+	
+	</form>
+
+	</div>
+	</div>
+	</div>
+	</div>
+	</div>
+	
+	<script>
+	
+	$(document).ready(function(){
+		uploadContactsFile();
+		viewSampleContactFile();
+	});
+	
+      tinymce.init({
+        selector: '#TinyMCE'
+      });
+      
+		$('.item').removeClass('active');
+		$('#add-link').addClass('active');
+    </script>
+    
+	</section>
+</body>
+</html>
